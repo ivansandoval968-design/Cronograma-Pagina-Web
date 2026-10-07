@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframe - Web Completa Luxury</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Estilos base de Wireframe */
+        body {
+            background-color: #f8f9fa;
+            color: #4b5563;
+            font-family: monospace;
+            overflow-x: hidden;
+        }
+
+        /* Marcadores visuales de estructura */
+        .wf-box {
+            background-color: #e5e7eb;
+            border: 2px dashed #9ca3af;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            text-align: center;
+            flex-direction: column;
+        }
+        
+        .wf-box:hover {
+            background-color: #d1d5db;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .wf-text-line {
+            height: 12px;
+            background-color: #d1d5db;
+            border-radius: 2px;
+            margin-bottom: 8px;
+        }
+        
+        .wf-text-line.short { width: 30%; }
+        .wf-text-line.medium { width: 60%; }
+        .wf-text-line.long { width: 90%; }
+        .wf-text-line.title { height: 24px; width: 70%; background-color: #9ca3af; margin-bottom: 16px; }
+
+        /* Comportamiento Sticky */
+        .sticky-col {
+            position: sticky;
+            top: 5rem;
+            align-self: start;
+            max-height: calc(100vh - 6rem);
+            overflow-y: auto;
+        }
+        .sticky-col::-webkit-scrollbar { width: 0px; }
+
+        /* Comentarios del diseñador (Notas UX) */
+        .ux-note {
+            position: absolute;
+            background-color: #fef08a;
+            color: #854d0e;
+            padding: 6px 10px;
+            font-size: 11px;
+            border: 1px solid #eab308;
+            border-radius: 4px;
+            box-shadow: 3px 3px 8px rgba(0,0,0,0.1);
+            z-index: 10;
+            pointer-events: none;
+            font-family: sans-serif;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+
+        /* Sistema de vistas (SPA simulation) */
+        .view-section {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- MENÚ FULL SCREEN (Oculto por defecto) -->
+    <div id="fullscreen-menu" class="fixed inset-0 bg-[#f8f9fa] z-[100] transform -translate-x-full transition-transform duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] flex flex-col overflow-y-auto">
+        
+        <!-- Header del Menú -->
+        <div class="h-16 flex items-center justify-between px-6 border-b border-gray-300">
+            <div class="w-1/3"></div>
+            <div class="w-1/3 flex justify-center text-xl font-bold tracking-[0.2em] uppercase text-gray-800">
+                Marca Luxury
+            </div>
+            <div class="w-1/3 flex justify-end">
+                <button onclick="toggleMenu()" class="text-gray-500 hover:text-black transition flex items-center gap-2 group">
+                    <span class="text-xs uppercase tracking-widest font-bold hidden sm:block">Cerrar</span>
+                    <i class="fas fa-times text-xl group-hover:rotate-90 transition duration-300"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Contenido del Menú -->
+        <div class="flex-grow flex flex-col lg:flex-row max-w-screen-2xl mx-auto w-full">
+            
+            <!-- Links Principales (Líneas de Negocio) -->
+            <div class="w-full lg:w-2/3 p-8 lg:p-24 flex flex-col justify-center gap-6">
+                <p class="text-xs uppercase tracking-[0.3em] text-gray-400 mb-4">Explorar Colecciones</p>
+                <a href="#" onclick="toggleMenu(); openCategory('Baños')" class="text-5xl md:text-7xl font-light tracking-[0.05em] text-gray-800 hover:text-gray-500 hover:italic transition-all duration-300">Baños.</a>
+                <a href="#" onclick="toggleMenu(); openCategory('Porcelanatos')" class="text-5xl md:text-7xl font-light tracking-[0.05em] text-gray-800 hover:text-gray-500 hover:italic transition-all duration-300">Porcelanatos.</a>
+                <a href="#" onclick="toggleMenu(); openCategory('Cocinas')" class="text-5xl md:text-7xl font-light tracking-[0.05em] text-gray-800 hover:text-gray-500 hover:italic transition-all duration-300">Cocinas.</a>
+                <a href="#" onclick="toggleMenu(); openCategory('Mobiliario')" class="text-5xl md:text-7xl font-light tracking-[0.05em] text-gray-800 hover:text-gray-500 hover:italic transition-all duration-300">Mobiliario.</a>
+            </div>
+
+            <!-- Links Secundarios / Corporativos -->
+            <div class="w-full lg:w-1/3 p-8 lg:p-24 bg-white/50 flex flex-col justify-center border-l border-gray-200">
+                <div class="mb-12">
+                    <p class="text-xs uppercase tracking-[0.3em] text-gray-400 mb-6">Mundo P-A</p>
+                    <ul class="space-y-4">
+                        <li><a href="#" class="text-lg tracking-widest uppercase text-gray-700 hover:text-black transition">Nuestra Filosofía</a></li>
+                        <li><a href="#" class="text-lg tracking-widest uppercase text-gray-700 hover:text-black transition">Proyectos (Contract)</a></li>
+                        <li><a href="#" class="text-lg tracking-widest uppercase text-gray-700 hover:text-black transition">Revista & Eventos</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <p class="text-xs uppercase tracking-[0.3em] text-gray-400 mb-6 flex items-center gap-2"><i class="fas fa-lock"></i> Área Pro</p>
+                    <ul class="space-y-4">
+                        <li><a href="#" class="text-sm tracking-widest uppercase text-gray-700 hover:text-black transition">Acceso Arquitectos</a></li>
+                        <li><a href="#" class="text-sm tracking-widest uppercase text-gray-700 hover:text-black transition">Catálogos Técnicos</a></li>
+                        <li><a href="#" class="text-sm tracking-widest uppercase text-gray-700 hover:text-black transition">Modelos BIM / 3D</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER GLOBAL (Se mantiene en todas las páginas) -->
+    <header class="bg-white border-b border-gray-300 fixed w-full top-0 z-50 h-16 flex items-center justify-between px-6 shadow-sm">
+        
+        <!-- Menú Hamburguesa (Colecciones) -->
+        <div class="flex items-center gap-4 w-1/3 cursor-pointer hover:text-black transition group" onclick="toggleMenu()">
+            <div class="flex flex-col gap-1.5">
+                <div class="w-6 h-0.5 bg-gray-500 group-hover:bg-black transition"></div>
+                <div class="w-6 h-0.5 bg-gray-500 group-hover:bg-black transition"></div>
+                <div class="w-4 h-0.5 bg-gray-500 group-hover:w-6 transition-all"></div>
+            </div>
+            <span class="text-xs uppercase tracking-widest font-bold hidden sm:block">Menú</span>
+        </div>
+        
+        <!-- Logo Central (Navega al Home) -->
+        <div class="w-1/3 flex justify-center relative cursor-pointer" onclick="navigateTo('home')">
+            <div class="text-xl font-bold tracking-[0.2em] uppercase text-gray-800 border-2 border-gray-800 px-4 py-1">Marca Luxury</div>
+        </div>
+        
+        <!-- Iconos de Acción (Derecha) -->
+        <div class="flex items-center justify-end gap-6 w-1/3">
+            <button class="text-gray-500 hover:text-black transition"><i class="fas fa-search"></i></button>
+            <button class="text-gray-500 hover:text-black transition hidden sm:block"><i class="far fa-user"></i></button>
+            
+            <!-- Botón de Proyecto / Carrito -->
+            <button class="relative flex items-center gap-2 text-gray-500 hover:text-black transition" onclick="navigateTo('cart')">
+                <i class="far fa-folder-open"></i>
+                <span class="text-xs uppercase font-bold hidden sm:block">Mi Proyecto</span>
+                <div class="absolute -top-1.5 -right-2 w-4 h-4 bg-gray-800 text-white text-[9px] rounded-full flex items-center justify-center font-sans">3</div>
+            </button>
+        </div>
+    </header>
+
+    <!-- Contenedor Principal (Con margen superior para compensar el header fixed) -->
+    <main class="flex-grow pt-16">
+
+        <!-- ========================================================= -->
+        <!-- ========================================================= -->
+        <section id="home" class="view-section active">
+            
+            <!-- Hero Section (Pantalla Completa) -->
+            <div class="relative w-full h-[calc(100vh-4rem)] bg-gray-800 flex flex-col items-center justify-center overflow-hidden">
+                <div class="absolute inset-0 wf-box border-none bg-gray-300 text-gray-500 opacity-50">
+                    <span class="text-2xl">[Video de Estilo de Vida 4K]</span>
+                </div>
+                <div class="absolute inset-0 bg-black/30 z-10"></div> <!-- Overlay oscuro para contraste -->
+                
+                <div class="z-20 text-center px-4">
+                    <i class="far fa-play-circle text-6xl text-white/70 mb-8 hover:text-white cursor-pointer transition"></i>
+                    <h1 class="text-4xl md:text-7xl font-light uppercase tracking-[0.3em] text-white mb-6">La Forma del Agua</h1>
+                    <p class="text-white/80 tracking-[0.2em] text-sm uppercase mb-10">Alta Costura para la Arquitectura Interior</p>
+                </div>
+            </div>
+
+            <!-- Líneas de Negocio (Direct Access) -->
+            <div class="w-full bg-white border-b border-gray-200">
+                <div class="max-w-[1600px] mx-auto grid grid-cols-2 md:grid-cols-4 divide-x divide-gray-200 border-x border-gray-200">
+                    <div class="py-8 px-4 text-center cursor-pointer group" onclick="openCategory('Baños')">
+                        <span class="text-xs uppercase tracking-[0.2em] text-gray-500 group-hover:text-black group-hover:font-bold transition">Baños</span>
+                    </div>
+                    <div class="py-8 px-4 text-center cursor-pointer group" onclick="openCategory('Porcelanatos')">
+                        <span class="text-xs uppercase tracking-[0.2em] text-gray-500 group-hover:text-black group-hover:font-bold transition">Porcelanatos</span>
+                    </div>
+                    <div class="py-8 px-4 text-center cursor-pointer group" onclick="openCategory('Cocinas')">
+                        <span class="text-xs uppercase tracking-[0.2em] text-gray-500 group-hover:text-black group-hover:font-bold transition">Cocinas</span>
+                    </div>
+                    <div class="py-8 px-4 text-center cursor-pointer group" onclick="openCategory('Mobiliario')">
+                        <span class="text-xs uppercase tracking-[0.2em] text-gray-500 group-hover:text-black group-hover:font-bold transition">Mobiliario</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Colecciones Exclusivas (Layout Editorial Asimétrico 2 Columnas) -->
+            <div class="max-w-[1600px] mx-auto px-6 sm:px-12 py-32">
+                <div class="flex flex-col md:flex-row justify-between items-end mb-20 border-b border-gray-200 pb-8">
+                    <div>
+                        <h2 class="text-3xl md:text-5xl font-light tracking-[0.1em] text-gray-800 uppercase leading-tight">Marcas<br>Exclusivas</h2>
+                    </div>
+                    <a href="#" onclick="toggleMenu()" class="text-xs uppercase tracking-[0.2em] text-gray-500 hover:text-black transition flex items-center gap-2 mt-6 md:mt-0">
+                        Explorar Catálogo <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-24">
+                    <!-- Marca Slider 1: Poliform / antoniolupi -->
+                    <div class="group cursor-pointer" onclick="openCategory('Mobiliario')">
+                        <div class="w-full aspect-[3/4] relative overflow-hidden mb-8 transition duration-700 group-hover:scale-[1.02]">
+                            <!-- Slider Track -->
+                            <div id="slider1" class="flex w-[200%] h-full transition-transform duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]">
+                                <!-- Slide 1: Poliform -->
+                                <div class="w-1/2 h-full wf-box bg-gray-200 border-none relative">
+                                    <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                                    <span class="text-gray-500 text-4xl font-serif italic mb-2">Poliform</span>
+                                    <span class="text-xs text-gray-400 uppercase tracking-widest">[Foto de Mobiliario]</span>
+                                </div>
+                                <!-- Slide 2: antoniolupi -->
+                                <div class="w-1/2 h-full wf-box bg-gray-300 border-none relative">
+                                    <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                                    <span class="text-gray-500 text-4xl font-serif italic mb-2">antoniolupi</span>
+                                    <span class="text-xs text-gray-400 uppercase tracking-widest">[Foto de Baño]</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Indicadores (Dots) -->
+                            <div class="absolute bottom-6 left-0 w-full flex justify-center gap-3 z-10">
+                                <div id="dot-slider1-0" class="w-8 h-0.5 bg-gray-800 transition-colors duration-500"></div>
+                                <div id="dot-slider1-1" class="w-8 h-0.5 bg-gray-400 transition-colors duration-500"></div>
+                            </div>
+                        </div>
+                        <div class="transition-opacity duration-500 h-20" id="text-container-slider1">
+                            <h3 id="title-slider1" class="text-3xl font-light tracking-[0.1em] uppercase mb-2 text-gray-800">Poliform</h3>
+                            <p id="desc-slider1" class="text-xs text-gray-500 tracking-widest uppercase">Mobiliario & Arquitectura Interior</p>
+                        </div>
+                        <span class="text-xs uppercase tracking-[0.2em] text-black border-b border-black pb-1 inline-block mt-4">Descubrir Marca</span>
+                    </div>
+                    
+                    <!-- Marca Slider 2 (Desfasada): Gessi / Nolte -->
+                    <div class="group cursor-pointer md:mt-40" onclick="openCategory('Baños')">
+                        <div class="w-full aspect-[3/4] relative overflow-hidden mb-8 transition duration-700 group-hover:scale-[1.02]">
+                            <!-- Slider Track -->
+                            <div id="slider2" class="flex w-[200%] h-full transition-transform duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]">
+                                <!-- Slide 1: Gessi -->
+                                <div class="w-1/2 h-full wf-box bg-gray-300 border-none relative">
+                                    <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                                    <span class="text-gray-500 text-4xl font-serif italic mb-2">Gessi</span>
+                                    <span class="text-xs text-gray-400 uppercase tracking-widest">[Foto Wellness]</span>
+                                </div>
+                                <!-- Slide 2: Nolte -->
+                                <div class="w-1/2 h-full wf-box bg-gray-200 border-none relative">
+                                    <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                                    <span class="text-gray-500 text-4xl font-serif italic mb-2">Nolte</span>
+                                    <span class="text-xs text-gray-400 uppercase tracking-widest">[Foto de Cocina]</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Indicadores (Dots) -->
+                            <div class="absolute bottom-6 left-0 w-full flex justify-center gap-3 z-10">
+                                <div id="dot-slider2-0" class="w-8 h-0.5 bg-gray-800 transition-colors duration-500"></div>
+                                <div id="dot-slider2-1" class="w-8 h-0.5 bg-gray-400 transition-colors duration-500"></div>
+                            </div>
+                        </div>
+                        <div class="transition-opacity duration-500 h-20" id="text-container-slider2">
+                            <h3 id="title-slider2" class="text-3xl font-light tracking-[0.1em] uppercase mb-2 text-gray-800">Gessi</h3>
+                            <p id="desc-slider2" class="text-xs text-gray-500 tracking-widest uppercase">The Private Wellness Company</p>
+                        </div>
+                        <span class="text-xs uppercase tracking-[0.2em] text-black border-b border-black pb-1 inline-block mt-4">Descubrir Marca</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Highlight de Producto Icónico -->
+            <div class="w-full min-h-[80vh] flex flex-col md:flex-row items-center bg-gray-50 my-16">
+                <div class="w-full md:w-1/2 h-[50vh] md:h-[80vh] wf-box border-none bg-gray-200">
+                    [Fotografía Macro de Textura o Flujo de Agua]
+                </div>
+                <div class="w-full md:w-1/2 p-12 md:p-24 flex flex-col justify-center items-start">
+                    <h2 class="text-xs uppercase tracking-[0.3em] text-gray-400 mb-6 border-b border-gray-300 pb-4 inline-block">Innovación Tecnológica</h2>
+                    <h3 class="text-4xl md:text-5xl font-light tracking-[0.1em] text-gray-800 mb-8 leading-tight">Sistema Wellness<br>Sensorial</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-10 max-w-md">
+                        Redefinimos el concepto de bienestar. Una integración perfecta entre tecnología invisible y estética pura para transformar el baño en un spa privado.
+                    </p>
+                    <button class="border border-gray-800 px-10 py-4 uppercase text-xs tracking-[0.2em] text-gray-800 hover:bg-gray-800 hover:text-white transition duration-300" onclick="navigateTo('pdp')">
+                        Descubrir Sistema
+                    </button>
+                </div>
+            </div>
+
+            <!-- P-A en el Mundo (Referencias de Proyectos B2B) -->
+            <div class="bg-[#1a1a1a] py-32 text-white">
+                <div class="max-w-[1600px] mx-auto px-6 sm:px-12">
+                    <div class="text-center mb-20 relative">
+                        <h2 class="text-3xl md:text-4xl font-light tracking-[0.2em] mb-4 uppercase">Proyectos Destacados</h2>
+                        <p class="text-gray-400 tracking-[0.2em] text-xs uppercase">Nuestra huella en la arquitectura global</p>
+                        <div class="ux-note top-0 right-10 text-gray-800">Sección crítica para inspirar a arquitectos y validar la marca.</div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+                        <!-- Proyecto 1 -->
+                        <div class="relative group cursor-pointer overflow-hidden aspect-square wf-box bg-gray-800 border-none">
+                            <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition duration-500 z-10"></div>
+                            <span class="text-gray-600">[Foto Resort]</span>
+                            <div class="absolute bottom-8 left-8 z-20 text-left">
+                                <h4 class="text-lg tracking-[0.1em] uppercase mb-1 text-white">Hotel Casa Medina</h4>
+                                <p class="text-xs text-gray-300 tracking-widest uppercase">Bogotá, Colombia</p>
+                            </div>
+                        </div>
+                        <!-- Proyecto 2 -->
+                        <div class="relative group cursor-pointer overflow-hidden aspect-square wf-box bg-gray-800 border-none">
+                            <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition duration-500 z-10"></div>
+                            <span class="text-gray-600">[Foto Penthouse]</span>
+                            <div class="absolute bottom-8 left-8 z-20 text-left">
+                                <h4 class="text-lg tracking-[0.1em] uppercase mb-1 text-white">Torre Krystal</h4>
+                                <p class="text-xs text-gray-300 tracking-widest uppercase">Medellín, Colombia</p>
+                            </div>
+                        </div>
+                        <!-- Proyecto 3 -->
+                        <div class="relative group cursor-pointer overflow-hidden aspect-square wf-box bg-gray-800 border-none">
+                            <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition duration-500 z-10"></div>
+                            <span class="text-gray-600">[Foto Restaurante]</span>
+                            <div class="absolute bottom-8 left-8 z-20 text-left">
+                                <h4 class="text-lg tracking-[0.1em] uppercase mb-1 text-white">El Cielo Restaurant</h4>
+                                <p class="text-xs text-gray-300 tracking-widest uppercase">Miami, USA</p>
+                            </div>
+                        </div>
+                        <!-- Proyecto 4 -->
+                        <div class="relative group cursor-pointer overflow-hidden aspect-square wf-box bg-gray-800 border-none">
+                            <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition duration-500 z-10"></div>
+                            <span class="text-gray-600">[Foto Villa]</span>
+                            <div class="absolute bottom-8 left-8 z-20 text-left">
+                                <h4 class="text-lg tracking-[0.1em] uppercase mb-1 text-white">Villa Privada</h4>
+                                <p class="text-xs text-gray-300 tracking-widest uppercase">Cartagena, Colombia</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-center mt-16">
+                        <button class="border border-white/30 text-white px-8 py-3 uppercase text-xs tracking-[0.2em] hover:bg-white hover:text-black transition duration-300">
+                            Ver todos los proyectos
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ========================================================= -->
+        <!-- ========================================================= -->
+        <section id="category" class="view-section">
+            
+            <div id="category-hero" class="w-full h-[35vh] bg-gray-200 flex items-center justify-center relative border-b border-gray-300">
+                <h1 id="main-category-title" class="text-4xl md:text-5xl font-light uppercase tracking-[0.2em] text-gray-800 z-10 bg-white/70 px-12 py-6 backdrop-blur-md">Baños</h1>
+                <div class="absolute inset-0 wf-box border-none opacity-40">[Fondo de Ambiente]</div>
+            </div>
+
+            <!-- NUEVO: HERO INMERSIVO DE COLECCIÓN (Video de fondo) -->
+            <div id="collection-hero" class="hidden w-full h-[60vh] bg-gray-900 flex flex-col items-center justify-center relative border-b border-gray-300 overflow-hidden">
+                <!-- Simulación de Video Loop -->
+                <div class="absolute inset-0 wf-box border-none bg-gray-300 text-gray-500 opacity-40">
+                    <i class="far fa-play-circle text-6xl mb-4 text-white/70"></i>
+                    <span class="text-xl text-white/70 tracking-widest uppercase">[Video Loop de la Colección]</span>
+                </div>
+                <div class="absolute inset-0 bg-black/40 z-10"></div> <!-- Overlay oscuro -->
+                
+                <div class="z-20 text-center px-6 max-w-4xl">
+                    <p class="text-white/80 tracking-[0.3em] text-xs uppercase mb-4" id="header-brand-subtitle">by Gessi</p>
+                    <h2 class="text-5xl md:text-7xl font-light uppercase tracking-[0.2em] text-white" id="header-collection-name">Colección Goccia</h2>
+                </div>
+                <div class="ux-note bottom-10 right-10 z-30 bg-white text-gray-800">Hero de Video (Solo Título de Colección)</div>
+            </div>
+
+            <div class="max-w-[1600px] mx-auto px-6 sm:px-12 py-4 flex gap-2 text-xs text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                <span onclick="navigateTo('home')" class="hover:text-black cursor-pointer transition">Inicio</span> > 
+                <span onclick="resetCategory()" class="hover:text-black font-bold cursor-pointer transition" id="bread-cat">Baños</span>
+                <span id="bread-brand" class="hidden"> > <span onclick="backToCollections()" class="hover:text-black font-bold cursor-pointer transition" id="current-brand-name">Marca</span></span>
+                <span id="bread-collection" class="hidden"> > <span class="font-bold text-gray-800" id="current-collection-name">Colección</span></span>
+            </div>
+
+            <div class="max-w-[1600px] mx-auto px-6 sm:px-12 py-16 min-h-[50vh]">
+                
+                <!-- NIVEL 1: Escaparate de Marcas -->
+                <div id="brand-showcase" class="block animate-[fadeIn_0.5s_ease-in-out]">
+                    <div class="text-center mb-16 relative">
+                        <h2 class="text-3xl font-light tracking-[0.1em] uppercase text-gray-800 mb-4">Nuestras Marcas</h2>
+                        <p class="text-xs text-gray-500 uppercase tracking-[0.2em]">Seleccione una casa de diseño para explorar sus colecciones</p>
+                    </div>
+                    
+                    <div id="brand-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                        <!-- Las marcas se inyectan acá con JS según la categoría -->
+                    </div>
+                </div>
+
+                <!-- NIVEL 2: Escaparate de Colecciones -->
+                <div id="collection-showcase" class="hidden animate-[fadeIn_0.5s_ease-in-out]">
+                    <div class="flex justify-between items-end mb-12 border-b border-gray-200 pb-6 relative">
+                        <div>
+                            <h2 class="text-4xl font-light tracking-[0.1em] uppercase text-gray-800 mb-2" id="header-brand-title">Gessi</h2>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest">Universos & Colecciones Exclusivas</p>
+                        </div>
+                        <div class="ux-note -right-10 top-0 w-48">NUEVO: El usuario elige el "Look" (Colección) antes de ver productos individuales.</div>
+                    </div>
+
+                    <!-- Grilla de Colecciones (Estilo Editorial) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="collection-grid">
+                        <!-- Se inyecta por JS -->
+                    </div>
+                </div>
+
+                <!-- NIVEL 3: Lista de Productos de la Colección -->
+                <div id="product-list" class="hidden animate-[fadeIn_0.5s_ease-in-out]">
+                    
+                    <!-- NUEVO BLOQUE 1: Descripción de la Colección -->
+                    <div class="max-w-4xl mx-auto text-center py-12 md:py-20 px-4">
+                        <p class="text-gray-600 text-lg md:text-xl leading-relaxed font-light" id="collection-description">
+                            Una forma revolucionaria de vivir el agua. Un diseño orgánico e inspirador que fluye con elegancia natural. Esta colección transforma el baño en un santuario de bienestar.
+                        </p>
+                    </div>
+
+                    <!-- NUEVO BLOQUE 2: Imagen de Ambiente -->
+                    <div class="w-full aspect-[21/9] bg-gray-200 wf-box mb-24 border-none relative group overflow-hidden">
+                        <div class="absolute inset-0 bg-black/5 group-hover:bg-transparent transition duration-500 z-10"></div>
+                        <i class="far fa-image text-5xl md:text-6xl text-gray-400 mb-4 group-hover:scale-110 transition duration-700"></i>
+                        <span class="text-sm md:text-xl tracking-widest uppercase text-gray-500">Fotografía de Ambiente Gran Formato</span>
+                    </div>
+
+                    <!-- NUEVO BLOQUE 3: Layout Dividido (Imagen Izq / Texto Der) -->
+                    <div class="flex flex-col md:flex-row gap-12 md:gap-24 items-center mb-32 border-b border-gray-200 pb-24">
+                        <div class="w-full md:w-1/2 aspect-[4/3] bg-gray-200 wf-box border-none relative overflow-hidden group">
+                            <i class="fas fa-camera-retro text-5xl text-gray-400 mb-4 group-hover:scale-110 transition duration-700"></i>
+                            <span class="text-xs tracking-widest uppercase text-gray-500">Imagen de Detalle / Textura</span>
+                        </div>
+                        <div class="w-full md:w-1/2 md:pr-12">
+                            <h3 class="text-xs uppercase tracking-[0.3em] text-gray-400 mb-6 border-b border-gray-300 pb-4 inline-block">Filosofía del Diseño</h3>
+                            <h4 class="text-3xl md:text-4xl font-light tracking-[0.1em] text-gray-800 mb-6 leading-tight">La pureza de<br>los elementos</h4>
+                            <p class="text-gray-500 text-sm leading-relaxed mb-10 max-w-md">
+                                Cada curva y línea ha sido cuidadosamente esculpida para reflejar la pureza de los materiales naturales. Un equilibrio perfecto entre forma y función que redefine la experiencia arquitectónica, fusionando acabados nobles con tecnología de precisión.
+                            </p>
+                            <span class="text-xs uppercase tracking-[0.2em] text-black border-b border-black pb-1 inline-block cursor-pointer hover:text-gray-500 transition">Conocer más detalles</span>
+                        </div>
+                    </div>
+
+                    <!-- Botonera de Filtros -->
+                    <div class="flex justify-between items-end mb-8 pb-4 mt-8">
+                        <h3 class="text-lg font-light uppercase tracking-widest text-gray-600">Catálogo de Productos</h3>
+                        <div class="flex gap-4 items-center">
+                            <!-- Filtros técnicos dentro de la colección -->
+                            <button class="border border-gray-300 px-4 py-2 text-[10px] uppercase tracking-[0.2em] hover:bg-gray-100 transition">Griferías</button>
+                            <button class="border border-gray-300 px-4 py-2 text-[10px] uppercase tracking-[0.2em] hover:bg-gray-100 transition">Duchas</button>
+                            <button class="border border-gray-300 px-4 py-2 text-[10px] uppercase tracking-[0.2em] hover:bg-gray-100 transition">Accesorios</button>
+                            <button class="border border-gray-800 px-6 py-2 text-[10px] text-white bg-gray-800 uppercase tracking-[0.2em] hover:bg-black transition ml-4"><i class="fas fa-sliders-h"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-16">
+                        
+                        <!-- Producto Item (Clickable to PDP) -->
+                        <div class="group cursor-pointer" onclick="navigateTo('pdp')">
+                            <div class="wf-box w-full aspect-[4/5] bg-gray-100 mb-4 relative overflow-hidden border-none">
+                                <i class="far fa-image text-5xl text-gray-300 group-hover:scale-110 transition duration-700"></i>
+                                <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition duration-300"></div>
+                            </div>
+                            <div class="text-[10px] text-gray-400 uppercase tracking-[0.2em] mb-2" id="prod-brand-1">Gessi - Colección</div>
+                            <h4 class="font-bold text-gray-800 uppercase tracking-widest text-sm mb-3">Grifería Lavabo Monomando</h4>
+                            <p class="text-xs text-gray-500 border-t border-gray-200 pt-3 flex justify-between items-center">
+                                <span class="uppercase tracking-widest hover:text-black">Ver opciones / Acabados</span> 
+                            </p>
+                        </div>
+
+                        <!-- Duplicando Items -->
+                        <div class="group cursor-pointer" onclick="navigateTo('pdp')">
+                            <div class="wf-box w-full aspect-[4/5] bg-gray-100 mb-4 border-none"><i class="far fa-image text-5xl text-gray-300"></i></div>
+                            <div class="text-[10px] text-gray-400 uppercase tracking-[0.2em] mb-2" id="prod-brand-2">Gessi - Colección</div>
+                            <h4 class="font-bold text-gray-800 uppercase tracking-widest text-sm mb-3">Grifería Ducha Empotrada</h4>
+                            <p class="text-xs text-gray-500 border-t border-gray-200 pt-3"><span class="uppercase tracking-widest hover:text-black">Ver opciones / Acabados</span></p>
+                        </div>
+                        <div class="group cursor-pointer" onclick="navigateTo('pdp')">
+                            <div class="wf-box w-full aspect-[4/5] bg-gray-100 mb-4 border-none"><i class="far fa-image text-5xl text-gray-300"></i></div>
+                            <div class="text-[10px] text-gray-400 uppercase tracking-[0.2em] mb-2" id="prod-brand-3">Gessi - Colección</div>
+                            <h4 class="font-bold text-gray-800 uppercase tracking-widest text-sm mb-3">Set Accesorios</h4>
+                            <p class="text-xs text-gray-500 border-t border-gray-200 pt-3"><span class="uppercase tracking-widest hover:text-black">Ver opciones / Acabados</span></p>
+                        </div>
+                        <div class="group cursor-pointer" onclick="navigateTo('pdp')">
+                            <div class="wf-box w-full aspect-[4/5] bg-gray-100 mb-4 border-none"><i class="far fa-image text-5xl text-gray-300"></i></div>
+                            <div class="text-[10px] text-gray-400 uppercase tracking-[0.2em] mb-2" id="prod-brand-4">Gessi - Colección</div>
+                            <h4 class="font-bold text-gray-800 uppercase tracking-widest text-sm mb-3">Toallero de Pie</h4>
+                            <p class="text-xs text-gray-500 border-t border-gray-200 pt-3"><span class="uppercase tracking-widest hover:text-black">Ver opciones / Acabados</span></p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- ========================================================= -->
+        <section id="pdp" class="view-section">
+            <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex gap-2 text-xs text-gray-500 uppercase tracking-wider mb-4 border-b border-gray-200 cursor-pointer">
+                <span onclick="navigateTo('home')" class="hover:text-black">Inicio</span> > <span onclick="navigateTo('category')" class="hover:text-black">Baños</span> > <span class="font-bold text-gray-800">Grifería Lavabo</span>
+            </div>
+
+            <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 flex flex-col lg:flex-row gap-12 relative">
+                
+                <!-- COLUMNA IZQUIERDA: GALERÍA (65%) -->
+                <div class="w-full lg:w-[65%] space-y-4 relative">
+                    <div class="ux-note top-4 left-4">Scroll Vertical. Imágenes enormes. Muestra el producto en ambiente y detalles.</div>
+                    
+                    <div class="wf-box w-full aspect-[4/3] bg-gray-100">
+                        <i class="far fa-image text-5xl mb-4"></i>
+                        <span class="uppercase tracking-widest text-sm">Foto Ambiente Principal</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="wf-box w-full aspect-[3/4] bg-gray-100">Macro Acabado</div>
+                        <div class="wf-box w-full aspect-[3/4] bg-gray-100">Detalle Maneral</div>
+                    </div>
+                    
+                    <div class="wf-box w-full aspect-video bg-gray-100 relative">
+                        <i class="far fa-play-circle text-5xl"></i>
+                        <span class="mt-4 uppercase tracking-widest text-sm">Video 360° / Flujo de agua</span>
+                    </div>
+                </div>
+
+                <!-- COLUMNA DERECHA: STICKY INFO (35%) -->
+                <div class="w-full lg:w-[35%]">
+                    <div class="sticky-col bg-white p-6 relative border border-gray-200 shadow-sm">
+                        
+                        <div class="mb-8">
+                            <div class="text-xs uppercase tracking-widest text-gray-400 mb-2">Colección Milano</div>
+                            <h1 class="text-3xl font-bold text-gray-800 uppercase tracking-wider mb-4">Grifería Lavabo Monomando Alto</h1>
+                            <div class="text-xl text-gray-600 mb-4 pb-4 border-b border-gray-200">$X,XXX.XX COP</div>
+                            
+                            <div class="text-sm text-gray-500 leading-relaxed mb-6">
+                                Minimalismo puro. La colección Milano redefine la elegancia con líneas arquitectónicas precisas y un flujo de agua optimizado ecológicamente.
+                            </div>
+                        </div>
+
+                        <!-- Selector de Acabados -->
+                        <div class="mb-8">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-sm font-bold uppercase tracking-widest text-gray-700">Acabado: <span class="font-normal text-gray-500">Oro Cepillado</span></span>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-12 h-12 rounded-full bg-gray-300 cursor-pointer hover:ring-2 ring-gray-400 transition"></div>
+                                <div class="w-12 h-12 rounded-full bg-yellow-600 cursor-pointer ring-2 ring-offset-2 ring-gray-800 relative">
+                                    <div class="ux-note -top-10 left-0 w-32">Crucial: Las fotos cambian al tocar los acabados.</div>
+                                </div>
+                                <div class="w-12 h-12 rounded-full bg-gray-900 cursor-pointer hover:ring-2 ring-gray-400 transition"></div>
+                            </div>
+                        </div>
+
+                        <!-- Call to Actions -->
+                        <div class="space-y-4 mb-10">
+                            <!-- Botón B2C Standard -->
+                            <button class="w-full bg-gray-800 text-white py-4 text-center text-sm font-bold tracking-[0.2em] uppercase hover:bg-black transition" onclick="alert('Añadido al carrito')">
+                                Añadir a la cesta
+                            </button>
+                            
+                            <!-- Botón B2B Arquitectos -->
+                            <button class="w-full border border-gray-400 text-gray-800 py-4 text-center text-sm font-bold tracking-[0.2em] uppercase flex items-center justify-center gap-3 hover:bg-gray-50 transition" onclick="navigateTo('cart')">
+                                <i class="far fa-folder-open"></i> Añadir a mi Proyecto
+                            </button>
+                        </div>
+
+                        <!-- Acordeones Técnicos -->
+                        <div class="border-t border-gray-200">
+                            <div class="border-b border-gray-200 py-5 flex justify-between items-center cursor-pointer hover:text-black">
+                                <span class="font-bold text-xs uppercase tracking-widest">Especificaciones Técnicas</span>
+                                <i class="fas fa-plus text-gray-400"></i>
+                            </div>
+                            <div class="border-b border-gray-200 py-5 flex justify-between items-center cursor-pointer hover:text-black">
+                                <span class="font-bold text-xs uppercase tracking-widest">Guía de Instalación</span>
+                                <i class="fas fa-plus text-gray-400"></i>
+                            </div>
+                            <!-- Foco B2B -->
+                            <div class="border-b border-gray-200 py-5 flex justify-between items-center cursor-pointer bg-gray-50 px-3 relative">
+                                <span class="font-bold text-xs uppercase tracking-widest flex items-center gap-2">
+                                    <i class="fas fa-download"></i> Modelos 3D (BIM / CAD)
+                                </span>
+                                <i class="fas fa-arrow-down text-gray-400"></i>
+                                <div class="ux-note -left-4 -bottom-8">El 'Dulce' para los arquitectos.</div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Cross Selling -->
+            <div class="bg-gray-100 py-16">
+                <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <h3 class="text-xl font-bold uppercase tracking-[0.2em] text-gray-800 text-center mb-10">Completa el Ambiente</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        <div class="wf-box aspect-square bg-white border-gray-200 cursor-pointer" onclick="navigateTo('pdp')">Prod Relacionado</div>
+                        <div class="wf-box aspect-square bg-white border-gray-200 cursor-pointer" onclick="navigateTo('pdp')">Prod Relacionado</div>
+                        <div class="wf-box aspect-square bg-white border-gray-200 cursor-pointer" onclick="navigateTo('pdp')">Prod Relacionado</div>
+                        <div class="wf-box aspect-square bg-white border-gray-200 cursor-pointer" onclick="navigateTo('pdp')">Prod Relacionado</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ========================================================= -->
+        <!-- ========================================================= -->
+        <section id="cart" class="view-section">
+            <div class="w-full bg-gray-800 text-white py-12 flex flex-col items-center justify-center relative">
+                <h1 class="text-3xl font-bold uppercase tracking-[0.2em] mb-2">Mi Proyecto</h1>
+                <p class="text-sm tracking-widest text-gray-400">SOLICITUD DE COTIZACIÓN PROFESIONAL</p>
+                <div class="ux-note -bottom-5 right-10 w-48 bg-white border-gray-300 text-gray-800">El carrito de compras se transforma en un "Constructor de Proyectos" para B2B.</div>
+            </div>
+
+            <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-16 flex flex-col lg:flex-row gap-12">
+                
+                <!-- Lista de Productos -->
+                <div class="w-full lg:w-2/3">
+                    <div class="border-b border-gray-300 pb-4 mb-6 flex justify-between uppercase tracking-widest text-xs font-bold text-gray-500">
+                        <span>Producto</span>
+                        <span>Cantidad / Total Ref.</span>
+                    </div>
+
+                    <!-- Item de Proyecto -->
+                    <div class="flex gap-6 py-6 border-b border-gray-200 items-center">
+                        <div class="wf-box w-24 h-24 bg-gray-100 flex-shrink-0">IMG</div>
+                        <div class="flex-grow">
+                            <div class="text-xs uppercase tracking-widest text-gray-400">Colección Milano</div>
+                            <h4 class="font-bold text-gray-800 uppercase tracking-wider">Grifería Lavabo Monomando Alto</h4>
+                            <p class="text-sm text-gray-500 mt-1">Acabado: Oro Cepillado | Ref: MIL-882</p>
+                        </div>
+                        <div class="flex items-center gap-6">
+                            <div class="border border-gray-300 flex items-center">
+                                <button class="px-3 py-1 hover:bg-gray-100">-</button>
+                                <span class="px-3 text-sm">3</span>
+                                <button class="px-3 py-1 hover:bg-gray-100">+</button>
+                            </div>
+                            <button class="text-gray-400 hover:text-red-500 transition"><i class="far fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Item de Proyecto 2 -->
+                    <div class="flex gap-6 py-6 border-b border-gray-200 items-center">
+                        <div class="wf-box w-24 h-24 bg-gray-100 flex-shrink-0">IMG</div>
+                        <div class="flex-grow">
+                            <div class="text-xs uppercase tracking-widest text-gray-400">Colección Roma</div>
+                            <h4 class="font-bold text-gray-800 uppercase tracking-wider">Bañera Exenta Solid Surface</h4>
+                            <p class="text-sm text-gray-500 mt-1">Acabado: Blanco Mate | Ref: ROM-100</p>
+                        </div>
+                        <div class="flex items-center gap-6">
+                            <div class="border border-gray-300 flex items-center">
+                                <button class="px-3 py-1 hover:bg-gray-100">-</button>
+                                <span class="px-3 text-sm">1</span>
+                                <button class="px-3 py-1 hover:bg-gray-100">+</button>
+                            </div>
+                            <button class="text-gray-400 hover:text-red-500 transition"><i class="far fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulario de Cotización -->
+                <div class="w-full lg:w-1/3">
+                    <div class="bg-gray-50 p-8 border border-gray-200">
+                        <h3 class="font-bold uppercase tracking-widest text-gray-800 mb-6 pb-4 border-b border-gray-300">Detalles del Proyecto</h3>
+                        
+                        <form class="space-y-4 text-sm" onsubmit="event.preventDefault(); alert('Cotización enviada al equipo de ventas.'); navigateTo('home');">
+                            <div>
+                                <label class="block uppercase tracking-wider text-xs font-bold text-gray-500 mb-2">Nombre del Proyecto / Obra *</label>
+                                <input type="text" class="w-full border border-gray-300 bg-white p-3 focus:outline-none focus:border-gray-800" placeholder="Ej: Hotel Boutique Bogotá">
+                            </div>
+                            <div>
+                                <label class="block uppercase tracking-wider text-xs font-bold text-gray-500 mb-2">Estudio de Arquitectura / Empresa</label>
+                                <input type="text" class="w-full border border-gray-300 bg-white p-3 focus:outline-none focus:border-gray-800">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block uppercase tracking-wider text-xs font-bold text-gray-500 mb-2">Nombre *</label>
+                                    <input type="text" class="w-full border border-gray-300 bg-white p-3 focus:outline-none focus:border-gray-800">
+                                </div>
+                                <div>
+                                    <label class="block uppercase tracking-wider text-xs font-bold text-gray-500 mb-2">Email *</label>
+                                    <input type="email" class="w-full border border-gray-300 bg-white p-3 focus:outline-none focus:border-gray-800">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block uppercase tracking-wider text-xs font-bold text-gray-500 mb-2">Notas Adicionales</label>
+                                <textarea class="w-full border border-gray-300 bg-white p-3 focus:outline-none focus:border-gray-800 h-24" placeholder="Requerimientos especiales, tiempos de entrega..."></textarea>
+                            </div>
+                            
+                            <button type="submit" class="w-full bg-gray-800 text-white py-4 mt-4 text-center text-sm font-bold tracking-[0.2em] uppercase hover:bg-black transition">
+                                Solicitar Cotización
+                            </button>
+                            <p class="text-xs text-gray-400 text-center mt-4">Un asesor experto revisará su lista y se contactará en menos de 24h.</p>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER GLOBAL -->
+    <footer class="bg-gray-900 text-white py-16 mt-auto">
+        <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-12">
+            <div>
+                <div class="text-xl font-bold tracking-[0.2em] uppercase mb-6">Marca Luxury</div>
+                <p class="text-gray-400 text-sm">Elevando la arquitectura interior a través de diseño atemporal y materiales excepcionales.</p>
+            </div>
+            <div>
+                <h4 class="font-bold uppercase tracking-widest mb-6 text-sm">Colecciones</h4>
+                <ul class="text-gray-400 text-sm space-y-3">
+                    <li class="hover:text-white cursor-pointer transition" onclick="openCategory('Baños')">Baños</li>
+                    <li class="hover:text-white cursor-pointer transition" onclick="openCategory('Porcelanatos')">Porcelanatos</li>
+                    <li class="hover:text-white cursor-pointer transition" onclick="openCategory('Cocinas')">Cocinas</li>
+                    <li class="hover:text-white cursor-pointer transition" onclick="openCategory('Mobiliario')">Mobiliario</li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold uppercase tracking-widest mb-6 text-sm">Área Pro</h4>
+                <ul class="text-gray-400 text-sm space-y-3">
+                    <li class="hover:text-white cursor-pointer transition">Acceso Arquitectos</li>
+                    <li class="hover:text-white cursor-pointer transition">Descarga de Modelos 3D</li>
+                    <li class="hover:text-white cursor-pointer transition">Catálogos Técnicos</li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold uppercase tracking-widest mb-6 text-sm">Newsletter</h4>
+                <div class="flex">
+                    <input type="email" placeholder="Su correo electrónico" class="bg-transparent border-b border-gray-600 focus:border-white outline-none px-2 py-2 text-sm w-full transition">
+                    <button class="border-b border-gray-600 px-4 hover:border-white transition"><i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // BASE DE DATOS DE MARCAS POR LÍNEA DE NEGOCIO (Actualizada según Brochure)
+        const dataMarcas = {
+            'Baños': ['Gessi', 'antoniolupi', 'TOTO', 'Catalano', 'Victoria + Albert', 'Ritmonio', 'Axor', 'hansgrohe', 'CEA Design'],
+            'Porcelanatos': ['Mirage', '41zero42', 'Florim', 'Lea Ceramiche'],
+            'Cocinas': ['Poggenpohl', 'Nolte'],
+            'Mobiliario': ['Poliform']
+        };
+
+        // Base de datos simulada de Colecciones por Marca
+        const dataColecciones = {
+            'Gessi': ['Goccia', 'Perle', 'Milano', 'Inciso', 'Jacqueline'],
+            'antoniolupi': ['Ilbagno', 'Ayati', 'Bespoke', 'Piana'],
+            'Poliform': ['Senzafine', 'Mondrian', 'Alea', 'Artex'],
+            'TOTO': ['Neorest', 'Washlet', 'Global'],
+            'Mirage': ['Lemmy', 'Glocal', 'Norr', 'Jewels']
+        };
+
+        // Lógica del Menú Full Screen
+        function toggleMenu() {
+            const menu = document.getElementById('fullscreen-menu');
+            if (menu.classList.contains('-translate-x-full')) {
+                menu.classList.remove('-translate-x-full');
+                menu.classList.add('translate-x-0');
+                document.body.style.overflow = 'hidden'; 
+            } else {
+                menu.classList.add('-translate-x-full');
+                menu.classList.remove('translate-x-0');
+                document.body.style.overflow = ''; 
+            }
+        }
+
+        // Navegación principal SPA
+        function navigateTo(viewId) {
+            const views = document.querySelectorAll('.view-section');
+            views.forEach(view => {
+                view.classList.remove('active');
+            });
+
+            const targetView = document.getElementById(viewId);
+            if (targetView) {
+                targetView.classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // Abrir una categoría desde el Home o el Menú
+        function openCategory(catName) {
+            navigateTo('category');
+            
+            // Actualizar Títulos y Breadcrumbs
+            document.getElementById('main-category-title').innerText = catName;
+            document.getElementById('bread-cat').innerText = catName;
+            
+            // Obtener el contenedor de la grilla de marcas
+            const grid = document.getElementById('brand-grid');
+            grid.innerHTML = ''; 
+
+            // Cargar dinámicamente las marcas correctas
+            if(dataMarcas[catName]) {
+                dataMarcas[catName].forEach(brand => {
+                    grid.innerHTML += `
+                        <div class="wf-box aspect-video bg-white border border-gray-200 shadow-sm cursor-pointer hover:border-gray-800 hover:shadow-md transition-all duration-300 group" onclick="selectBrand('${brand}')">
+                            <span class="text-xl md:text-2xl font-serif italic text-gray-600 group-hover:text-black transition">${brand}</span>
+                        </div>
+                    `;
+                });
+            } else {
+                grid.innerHTML = `<p class="col-span-full text-center text-gray-400 py-10">No hay marcas configuradas para ${catName} aún.</p>`;
+            }
+
+            resetCategory(); 
+        }
+
+        // --- LÓGICA NIVEL 1: SELECCIONAR MARCA ---
+        let marcaActualGlobal = '';
+
+        function selectBrand(brandName) {
+            marcaActualGlobal = brandName;
+            
+            document.getElementById('brand-showcase').classList.add('hidden');
+            document.getElementById('brand-showcase').classList.remove('block');
+            
+            document.getElementById('collection-showcase').classList.remove('hidden');
+            document.getElementById('collection-showcase').classList.add('block');
+            
+            document.getElementById('product-list').classList.add('hidden');
+            document.getElementById('product-list').classList.remove('block');
+            
+            document.getElementById('bread-brand').classList.remove('hidden');
+            document.getElementById('bread-collection').classList.add('hidden');
+            
+            document.getElementById('bread-brand').innerHTML = ` > <span onclick="backToCollections()" class="hover:text-black font-bold cursor-pointer transition" id="current-brand-name">${brandName}</span>`;
+            
+            document.getElementById('header-brand-title').innerText = brandName;
+            
+            const colGrid = document.getElementById('collection-grid');
+            colGrid.innerHTML = '';
+            
+            let coleccionesDeMarca = dataColecciones[brandName] || ['Colección Signature', 'Colección Clásica', 'Nueva Colección'];
+            
+            coleccionesDeMarca.forEach(col => {
+                colGrid.innerHTML += `
+                    <div class="wf-box w-full aspect-[21/9] bg-gray-200 border-none relative overflow-hidden group cursor-pointer" onclick="selectCollection('${col}')">
+                        <div class="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition duration-500 z-10"></div>
+                        <span class="text-gray-400 z-0 text-xl">[Foto Ambiente de la Colección]</span>
+                        <div class="absolute bottom-8 left-8 z-20 text-left">
+                            <h3 class="text-3xl font-light text-white tracking-[0.1em] uppercase drop-shadow-md group-hover:translate-x-2 transition-transform duration-500">${col}</h3>
+                            <span class="text-xs text-white/70 uppercase tracking-widest block mt-2 opacity-0 group-hover:opacity-100 transition-opacity">Ver productos</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            window.scrollTo({ top: 300, behavior: 'smooth' });
+        }
+
+        // --- LÓGICA NIVEL 2: SELECCIONAR COLECCIÓN ---
+        function selectCollection(collectionName) {
+            document.getElementById('collection-showcase').classList.add('hidden');
+            document.getElementById('collection-showcase').classList.remove('block');
+            
+            document.getElementById('product-list').classList.remove('hidden');
+            document.getElementById('product-list').classList.add('block');
+            
+            document.getElementById('bread-collection').classList.remove('hidden');
+            
+            document.getElementById('bread-brand').innerHTML = ` > <span onclick="backToCollections()" class="hover:text-black cursor-pointer transition font-normal" id="current-brand-name">${marcaActualGlobal}</span>`;
+            
+            document.getElementById('current-collection-name').innerText = collectionName;
+            
+            // ACTUALIZACIÓN DE TEXTOS EN EL NUEVO HERO DE COLECCIÓN
+            document.getElementById('header-collection-name').innerText = collectionName;
+            document.getElementById('header-brand-subtitle').innerText = 'by ' + marcaActualGlobal;
+            
+            // Ocultar el Hero genérico de "Baños" y mostrar el Inmersivo de Colección
+            document.getElementById('category-hero').style.display = 'none';
+            document.getElementById('collection-hero').style.display = 'flex';
+            document.getElementById('collection-hero').classList.remove('hidden');
+
+            // Simular descripciones dinámicas
+            const desc = document.getElementById('collection-description');
+            if(collectionName === 'Goccia') {
+                desc.innerText = "Una forma revolucionaria de vivir el agua. Un diseño orgánico e inspirador que fluye con elegancia natural. Esta colección transforma el baño en un santuario de bienestar.";
+            } else if (collectionName === 'Milano') {
+                 desc.innerText = "Líneas arquitectónicas rigurosas y minimalismo puro. Inspirada en el diseño urbano contemporáneo, ofrece una estética contundente y un rendimiento impecable.";
+            } else {
+                 desc.innerText = `Descubra la exclusividad de ${collectionName}. Una propuesta estética única de ${marcaActualGlobal} diseñada para los proyectos arquitectónicos más exigentes del mundo.`;
+            }
+
+            for(let i=1; i<=4; i++) {
+                let el = document.getElementById(`prod-brand-${i}`);
+                if(el) el.innerText = `${marcaActualGlobal} - ${collectionName}`;
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll arriba para ver el nuevo título
+        }
+
+        // --- LÓGICA BREADCRUMBS ---
+        function backToCollections() {
+            document.getElementById('product-list').classList.add('hidden');
+            document.getElementById('product-list').classList.remove('block');
+            
+            document.getElementById('collection-showcase').classList.remove('hidden');
+            document.getElementById('collection-showcase').classList.add('block');
+            
+            document.getElementById('bread-collection').classList.add('hidden');
+            document.getElementById('bread-brand').innerHTML = ` > <span onclick="backToCollections()" class="hover:text-black font-bold cursor-pointer transition" id="current-brand-name">${marcaActualGlobal}</span>`;
+            
+            // Volver a mostrar el Hero genérico y ocultar el Inmersivo
+            document.getElementById('category-hero').style.display = 'flex';
+            document.getElementById('collection-hero').style.display = 'none';
+            document.getElementById('collection-hero').classList.add('hidden');
+        }
+
+        function resetCategory() {
+            document.getElementById('brand-showcase').classList.remove('hidden');
+            document.getElementById('brand-showcase').classList.add('block');
+            
+            document.getElementById('collection-showcase').classList.add('hidden');
+            document.getElementById('collection-showcase').classList.remove('block');
+            document.getElementById('product-list').classList.add('hidden');
+            document.getElementById('product-list').classList.remove('block');
+            
+            document.getElementById('bread-brand').classList.add('hidden');
+            document.getElementById('bread-collection').classList.add('hidden');
+            
+            // Volver a mostrar el Hero genérico y ocultar el Inmersivo
+            document.getElementById('category-hero').style.display = 'flex';
+            document.getElementById('collection-hero').style.display = 'none';
+            document.getElementById('collection-hero').classList.add('hidden');
+        }
+
+        // --- LÓGICA SLIDERS HOME (Marcas Exclusivas) ---
+        const slidersData = {
+            'slider1': {
+                current: 0,
+                titles: ['Poliform', 'antoniolupi'],
+                descs: ['Mobiliario & Arquitectura Interior', 'El nuevo concepto de baño']
+            },
+            'slider2': {
+                current: 0,
+                titles: ['Gessi', 'Nolte'],
+                descs: ['The Private Wellness Company', 'Innovación Alemana en Cocinas']
+            }
+        };
+
+        function slideNext(sliderId) {
+            const slider = slidersData[sliderId];
+            slider.current = (slider.current === 0) ? 1 : 0; 
+
+            const track = document.getElementById(sliderId);
+            if(track) {
+                track.style.transform = `translateX(-${slider.current * 50}%)`;
+            }
+
+            const dot0 = document.getElementById(`dot-${sliderId}-0`);
+            const dot1 = document.getElementById(`dot-${sliderId}-1`);
+            if(dot0 && dot1) {
+                if(slider.current === 0) {
+                    dot0.classList.replace('bg-gray-400', 'bg-gray-800');
+                    dot1.classList.replace('bg-gray-800', 'bg-gray-400');
+                } else {
+                    dot0.classList.replace('bg-gray-800', 'bg-gray-400');
+                    dot1.classList.replace('bg-gray-400', 'bg-gray-800');
+                }
+            }
+
+            const textContainer = document.getElementById(`text-container-${sliderId}`);
+            const titleEl = document.getElementById(`title-${sliderId}`);
+            const descEl = document.getElementById(`desc-${sliderId}`);
+            
+            if(textContainer && titleEl && descEl) {
+                textContainer.style.opacity = 0; 
+                
+                setTimeout(() => {
+                    titleEl.innerText = slider.titles[slider.current];
+                    descEl.innerText = slider.descs[slider.current];
+                    textContainer.style.opacity = 1; 
+                }, 500); 
+            }
+        }
+
+        setInterval(() => {
+            slideNext('slider1');
+            slideNext('slider2');
+        }, 5000); 
+
+    </script>
+</body>
+</html>
